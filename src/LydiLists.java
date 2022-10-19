@@ -13,6 +13,30 @@ public class LydiLists {
         return listArr;
     }
 
+    static <T> List<Object> toListMatrix(Object[] arr, int dim) {
+        int size = arr.length;
+        List<T> listArr = new ArrayList<T>();
+        if (dim > 1) {
+            listArr = (List<T>) Arrays.asList(arr);
+            for (int i = 0; i < size; i++) {
+                List<Object> next = toListMatrix<List<T>>((Object[][]) arr, dim-1)
+            }
+        }
+    }
+
+    private static <T> List<Object> toListMatrixPrivate(Object[] arr, int dim) {
+        int size = arr.length;
+        List<T> listArr = new ArrayList<T>();
+        if (dim > 1) {
+            listArr = (List<T>) Arrays.asList(arr)
+            listArr = ((List<T>) listArr);
+            for (int i = 0; i < size; i++) {
+                List<Object> next = toListMatrix((Object[]) arr[i], dim-1);
+            }
+        }
+        return listArr;
+    }
+
     // find 'toFind' in 'dim' dimensional arraylist 'map'
     // do not accept a T where T.instanceOf(List)
     static List<Integer> findIn(List<Object> toSearch, List<Object> objectsToFind) throws Exception {

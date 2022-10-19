@@ -16,9 +16,13 @@ public class Maze {
     };
 
     static void search() throws Exception {
-        List<Object> mazeLists = LydiLists.toLists(mazeBase);
-        Stack<List<Integer>> worklist = (Stack<List<Integer>>) LydiLists.findIn(
-                LydiLists.toLists()
-        );
+        List<Object> mazeList = LydiLists.toLists(mazeBase);
+        Stack<List<Integer>> worklist = new Stack<List<Integer>>();
+        worklist.add(LydiLists.findIn(mazeList, S));
+        while (true) {
+            for (List<Integer> coord : worklist) {
+                Object north = mazeList.get(coord.get(0)).get(coord.get())
+            }
+        }
     }
 }
