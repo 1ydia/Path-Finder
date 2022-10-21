@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 public class LydiLists {
     static List<Object> toLists(Object[] arr) {
@@ -8,33 +9,23 @@ public class LydiLists {
         for (int i = 0; i < listArr.size(); i++) {
             Object obj = listArr.get(i);
             if (obj instanceof Object[]) listArr.set(i, toLists((Object[]) obj));
-            // thanks, java
         }
         return listArr;
     }
 
-    static <T> List<Object> toListMatrix(Object[] arr, int dim) {
-        int size = arr.length;
-        List<T> listArr = new ArrayList<T>();
-        if (dim > 1) {
-            listArr = (List<T>) Arrays.asList(arr);
-            for (int i = 0; i < size; i++) {
-                List<Object> next = toListMatrix<List<T>>((Object[][]) arr, dim-1)
-            }
+    static List<Integer> addListVectors(List<Integer> a, List<Integer> b) throws Exception {
+        if (a.size() != b.size()) throw new Exception("Lists must be the same size to do element-wise addition.");
+        List<Integer> ans = (ArrayList<Integer>) List.copyOf(a);
+        for (int i = 0; i < a.size(); i++) {
+            ans.set(i, ans.get(i) + b.get(i));
         }
+        return ans;
     }
 
-    private static <T> List<Object> toListMatrixPrivate(Object[] arr, int dim) {
-        int size = arr.length;
-        List<T> listArr = new ArrayList<T>();
-        if (dim > 1) {
-            listArr = (List<T>) Arrays.asList(arr)
-            listArr = ((List<T>) listArr);
-            for (int i = 0; i < size; i++) {
-                List<Object> next = toListMatrix((Object[]) arr[i], dim-1);
-            }
-        }
-        return listArr;
+    static Object atCoordInList(Stack<Integer> coord, List<Object> list) {
+        Object obj = list.get(coord.pop());
+        if (obj instanceof List) return atCoordInList(coord, (List<Object>) obj);
+        else return obj;
     }
 
     // find 'toFind' in 'dim' dimensional arraylist 'map'

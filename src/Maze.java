@@ -15,14 +15,40 @@ public class Maze {
             {X, X, X, X, X, X, X, X, X, X, X, X, X, X, X}
     };
 
-    static void search() throws Exception {
-        List<Object> mazeList = LydiLists.toLists(mazeBase);
-        Stack<List<Integer>> worklist = new Stack<List<Integer>>();
-        worklist.add(LydiLists.findIn(mazeList, S));
+    static Stack<Stack<Integer>> search() throws Exception {
+        char[][] mazeCopy = mazeBase.clone();
+        List<Object> mazeList = LydiLists.toLists(mazeCopy);
+        Stack<Stack<Stack<Integer>>> worklist = new Stack<Stack<Stack<Integer>>>();
+        worklist.add((Stack<Stack<Integer>>) List.of((Stack<Integer>) LydiLists.findIn(mazeList, S)));
+        List<Character> valids = List.of(C, E);
+        List<List<Integer>> directions = List.of(
+                List.of(0, -1), // North
+                List.of(1, 0), // East
+                List.of(0, 1), // South
+                List.of(-1, 0) // West
+        );
         while (true) {
-            for (List<Integer> coord : worklist) {
-                Object north = mazeList.get(coord.get(0)).get(coord.get())
+            Object last = worklist.clone();
+            for (Stack<Stack<Integer>> history : worklist) {
+                List<Integer> coord = history.peek();
+                if (mazeCopy[coord.get(1)][coord.get(0)] == E) {
+                    System.out.println("Queue: Escape Successful");
+                    return history;
+                }
+                else mazeCopy[coord.get(1)][coord.get(0)] = V;
+                for (List<Integer> direction : directions) {
+                    Stack<Stack<Integer>> newV = (Stack<Stack<Integer>>) history.clone();
+                    newV.add((Stack<Integer>) LydiLists.addListVectors(coord, direction));
+                    if(valids.contains(LydiLists.atCoordInList(newV.peek(), mazeList))) worklist.add(newV);
+                }
             }
+            if (last.equals(worklist)) throw new Exception("Maze solver got stuck.");
+        }
+    }
+
+    static void printArr(char[][] arr) {
+        for (char[] line : arr) {
+            System.out.println(new String(line));
         }
     }
 }
