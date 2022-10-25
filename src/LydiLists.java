@@ -1,21 +1,43 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
 public class LydiLists {
+    static Object[] convertToObjectArray(Object arr) {
+        int arrLength = Array.getLength(arr);
+        Object[] newArr = new Object[arrLength];
+        for (int i = 0; i < arrLength; i++) {
+            newArr[i] = Array.get(arr, i);
+        }
+        return newArr;
+    }
+
+    static Object[] toObjects(Object[] arr) {
+        Object[] wrapperArr = new Object[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i].getClass().isArray()) {
+                wrapperArr[i] = toObjects(convertToObjectArray(arr[i]));
+            } else {
+                wrapperArr[i] = arr[i];
+            }
+        }
+        return wrapperArr;
+    }
+
     static List<Object> toLists(Object[] arr) {
-        List<Object> listArr = Arrays.asList(arr);
+        List<Object> listArr = Arrays.asList(toObjects(arr));
         for (int i = 0; i < listArr.size(); i++) {
             Object obj = listArr.get(i);
-            if (obj instanceof Object[]) listArr.set(i, toLists((Object[]) obj));
+            if (obj.getClass().isArray()) listArr.set(i, toLists((Object[]) obj));
         }
         return listArr;
     }
 
     static List<Integer> addListVectors(List<Integer> a, List<Integer> b) throws Exception {
         if (a.size() != b.size()) throw new Exception("Lists must be the same size to do element-wise addition.");
-        List<Integer> ans = (ArrayList<Integer>) List.copyOf(a);
+        List<Integer> ans = new ArrayList<>(List.copyOf(a));
         for (int i = 0; i < a.size(); i++) {
             ans.set(i, ans.get(i) + b.get(i));
         }

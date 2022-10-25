@@ -16,34 +16,45 @@ public class Maze {
     };
 
     static Stack<Stack<Integer>> search() throws Exception {
-        char[][] mazeCopy = mazeBase.clone();
-        List<Object> mazeList = LydiLists.toLists(mazeCopy);
-        Stack<Stack<Stack<Integer>>> worklist = new Stack<Stack<Stack<Integer>>>();
-        worklist.add((Stack<Stack<Integer>>) List.of((Stack<Integer>) LydiLists.findIn(mazeList, S)));
-        List<Character> valids = List.of(C, E);
-        List<List<Integer>> directions = List.of(
-                List.of(0, -1), // North
-                List.of(1, 0), // East
-                List.of(0, 1), // South
-                List.of(-1, 0) // West
-        );
-        while (true) {
-            Object last = worklist.clone();
-            for (Stack<Stack<Integer>> history : worklist) {
-                List<Integer> coord = history.peek();
-                if (mazeCopy[coord.get(1)][coord.get(0)] == E) {
-                    System.out.println("Queue: Escape Successful");
-                    return history;
+        char[][] maze = mazeBase.clone();
+
+        Stack<Stack<Integer>> path = new Stack<Stack<Integer>>();
+
+        Stack<Integer> start = new Stack<Integer>();
+        start.addAll(LydiLists.findIn(LydiLists.toLists(maze), S));
+        path.push(start);
+
+        while (path.size() > 0) {
+            Stack<Integer> coord = path.pop();
+            int x = coord.get(0);
+            int y = coord.get(1);
+            if (maze[y][x] == E) {
+                System.out.println("Found the end!");
+                System.out.println("Path:");
+                for (Stack<Integer> c : path) {
+                    System.out.printf("(%d, %d)%n", c.get(1), c.get(0));
                 }
-                else mazeCopy[coord.get(1)][coord.get(0)] = V;
-                for (List<Integer> direction : directions) {
-                    Stack<Stack<Integer>> newV = (Stack<Stack<Integer>>) history.clone();
-                    newV.add((Stack<Integer>) LydiLists.addListVectors(coord, direction));
-                    if(valids.contains(LydiLists.atCoordInList(newV.peek(), mazeList))) worklist.add(newV);
-                }
+                System.out.println(coord);
+                return path;
             }
-            if (last.equals(worklist)) throw new Exception("Maze solver got stuck.");
+            if (maze[y][x] == C || maze[y][x] == S) {
+                maze[y][x] = V;
+                path.push(coord);
+                Character North = maze[y - 1][x];
+                Character South = maze[y + 1][x];
+                Character East = maze[y][x + 1];
+                Character West = maze[y][x - 1];
+                Stack<Integer> newCoord = new Stack<Integer>();
+                newCoord.addAll(coord);
+                if (North == C || North == E) newCoord.set(1, y - 1);
+                else if (South == C || South == E) newCoord.set(1, y + 1);
+                else if (East == C || East == E) newCoord.set(0, x + 1);
+                else if (West == C || West == E) newCoord.set(0, x - 1);
+                else continue;
+                path.push(newCoord);
+            }
         }
+        throw new Exception("No path found!");
     }
 
     static void printArr(char[][] arr) {
